@@ -42,7 +42,13 @@ int No_of_Parameters = 2;
 void setup() {
   Serial.begin(115200);
 
-  //Blynk
+  //Firebase
+  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+  Blynk.begin(auth, ssid, pass);
+  dht11.begin();
+  timer.setInterval(1000L, sendSensor);
+  
+//Blynk
   dht11.begin();
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("connecting");
@@ -54,13 +60,7 @@ void setup() {
   Serial.print("Connected with IP : ");
   Serial.println(WiFi.localIP());
   Serial.println();
-
-  //Firebase
-  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
-  Blynk.begin(auth, ssid, pass);
-  dht11.begin();
-  timer.setInterval(1000L, sendSensor);
-
+  
   //Google Sheet
   while (!Serial);
   dht11.begin();
@@ -72,12 +72,7 @@ void setup() {
 void loop() {
   float h = dht11.readHumidity();
   float t = dht11.readTemperature();
-
-  //Blynk
-  Blynk.run();
-  timer.run();
-  delay(1000);
-
+  
   //Firebase
   if (isnan(h) || isnan(t)){
     Serial.println("Error!! Gagal membaca sensor DHT11");
@@ -102,6 +97,11 @@ void loop() {
     Serial.println("Data Kelembaban tidak terkirim");
     Serial.println(firebaseData.errorReason());
   }
+
+  //Blynk
+  Blynk.run();
+  timer.run();
+  delay(1000);
 
   //Google Sheet
   Data_to_Sheets(No_of_Parameters,  t,  h);
