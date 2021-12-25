@@ -48,7 +48,7 @@ void setup() {
   dht11.begin();
   timer.setInterval(1000L, sendSensor);
   
-//Blynk
+  //Blynk
   dht11.begin();
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("connecting");
